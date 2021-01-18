@@ -1,21 +1,21 @@
-import React from 'react';
-import { connect, router, routerRedux } from 'dva';
-import { Layout } from 'antd';
-import NavBar from 'components/NavBar';
-import { LeftSideBar, RightSideBar } from 'components/SideBar';
-import TopBar from 'components/TopBar';
-import SkinToolbox from 'components/SkinToolbox';
-import pathToRegexp from 'path-to-regexp';
-import { enquireIsMobile } from '@/utils/enquireScreen';
-import TabsLayout from './TabsLayout';
-import $$ from 'cmn-utils';
-import cx from 'classnames';
-import isEqual from 'react-fast-compare';
-import { SwitchTransition, CSSTransition } from 'react-transition-group';
-import 'assets/styles/transition.less';
-import './styles/basic.less';
-const { Switch } = router;
-const { Content, Header } = Layout;
+import React from 'react'
+import { connect, router, routerRedux } from 'dva'
+import { Layout } from 'antd'
+import NavBar from 'components/NavBar'
+import { LeftSideBar, RightSideBar } from 'components/SideBar'
+import TopBar from 'components/TopBar'
+import SkinToolbox from 'components/SkinToolbox'
+import pathToRegexp from 'path-to-regexp'
+import { enquireIsMobile } from '@/utils/enquireScreen'
+import TabsLayout from './TabsLayout'
+import $$ from 'cmn-utils'
+import cx from 'classnames'
+import isEqual from 'react-fast-compare'
+import { SwitchTransition, CSSTransition } from 'react-transition-group'
+import 'assets/styles/transition.less'
+import './styles/basic.less'
+const { Switch } = router
+const { Content, Header } = Layout
 
 /**
  * 基本部局
@@ -26,20 +26,20 @@ const { Content, Header } = Layout;
 @connect(({ global }) => ({ global }))
 export default class BasicLayout extends React.PureComponent {
   constructor(props) {
-    super(props);
-    const user = $$.getStore('user', []);
+    super(props)
+    const user = $$.getStore('user', [])
     const theme = $$.getStore('theme', {
       leftSide: 'darkgrey', // 左边
-      navbar: 'light' // 顶部
-    });
+      navbar: 'light', // 顶部
+    })
     if (!theme.layout) {
       theme.layout = [
         'fixedHeader',
         'fixedSidebar',
-        'fixedBreadcrumbs'
+        'fixedBreadcrumbs',
         // 'hidedBreadcrumbs',
         // 'tabLayout',
-      ];
+      ]
     }
     this.state = {
       collapsedLeftSide: false, // 左边栏开关控制
@@ -50,36 +50,36 @@ export default class BasicLayout extends React.PureComponent {
       theme, // 皮肤设置
       user,
       currentMenu: {},
-      isMobile: false
-    };
+      isMobile: false,
+    }
 
     props.dispatch({
-      type: 'global/getMenu'
-    });
+      type: 'global/getMenu',
+    })
   }
 
   componentDidMount() {
-    this.checkLoginState();
+    this.checkLoginState()
 
-    this.unregisterEnquire = enquireIsMobile(ismobile => {
-      const { isMobile, theme } = this.state;
+    this.unregisterEnquire = enquireIsMobile((ismobile) => {
+      const { isMobile, theme } = this.state
       if (isMobile !== ismobile) {
         // 如查是移动端则不固定侧边栏
         if (ismobile && $$.isArray(theme.layout)) {
-          theme.layout = theme.layout.filter(item => item !== 'fixedSidebar');
+          theme.layout = theme.layout.filter((item) => item !== 'fixedSidebar')
         }
         this.setState({
-          isMobile: ismobile
-        });
+          isMobile: ismobile,
+        })
       }
-    });
+    })
   }
 
   // 检查有户是否登录
   checkLoginState() {
-    const user = $$.getStore('user');
+    const user = $$.getStore('user')
     if (!user) {
-      this.props.dispatch(routerRedux.replace('/sign/login'));
+      this.props.dispatch(routerRedux.replace('/sign/login'))
     }
   }
 
@@ -89,103 +89,101 @@ export default class BasicLayout extends React.PureComponent {
       !isEqual(this.props.global.flatMenu, prevProps.global.flatMenu)
     ) {
       this.setState({
-        currentMenu: this.getCurrentMenu(this.props) || {}
-      });
+        currentMenu: this.getCurrentMenu(this.props) || {},
+      })
     }
   }
 
   componentWillUnmount() {
     // 清理监听
-    this.unregisterEnquire();
+    this.unregisterEnquire()
   }
 
   getCurrentMenu(props) {
     const {
       location: { pathname },
-      global
-    } = props || this.props;
-    const menu = this.getMeunMatchKeys(global.flatMenu, pathname)[0];
-    return menu;
+      global,
+    } = props || this.props
+    const menu = this.getMeunMatchKeys(global.flatMenu, pathname)[0]
+    return menu
   }
 
   getMeunMatchKeys = (flatMenu, path) => {
-    return flatMenu.filter(item => {
-      return pathToRegexp(item.path).test(path);
-    });
-  };
+    return flatMenu.filter((item) => {
+      return pathToRegexp(item.path).test(path)
+    })
+  }
 
   /**
    * 顶部左侧菜单图标收缩控制
    */
-  onCollapseLeftSide = _ => {
+  onCollapseLeftSide = (_) => {
     const collapsedLeftSide =
-      this.state.leftCollapsedWidth === 0
-        ? true
-        : !this.state.collapsedLeftSide;
+      this.state.leftCollapsedWidth === 0 ? true : !this.state.collapsedLeftSide
     const collapsedRightSide =
-      this.state.collapsedRightSide || !collapsedLeftSide;
+      this.state.collapsedRightSide || !collapsedLeftSide
 
     this.setState({
       collapsedLeftSide,
       collapsedRightSide,
-      leftCollapsedWidth: 60
-    });
-  };
+      leftCollapsedWidth: 60,
+    })
+  }
 
   /**
    * 完全关闭左边栏，即宽为0
    */
-  onCollapseLeftSideAll = _ => {
+  onCollapseLeftSideAll = (_) => {
     this.setState({
       collapsedLeftSide: true,
-      leftCollapsedWidth: 0
-    });
-  };
+      leftCollapsedWidth: 0,
+    })
+  }
 
   /**
    * 展开面包屑所在条中的多功能区
    */
-  onExpandTopBar = _ => {
+  onExpandTopBar = (_) => {
     this.setState({
-      expandTopBar: true
-    });
-  };
+      expandTopBar: true,
+    })
+  }
 
   /**
    * 与上面相反
    */
-  onCollapseTopBar = _ => {
+  onCollapseTopBar = (_) => {
     this.setState({
-      expandTopBar: false
-    });
-  };
+      expandTopBar: false,
+    })
+  }
 
   /**
    * 切换左边栏中头部的开合
    */
-  toggleSidebarHeader = _ => {
+  toggleSidebarHeader = (_) => {
     this.setState({
-      showSidebarHeader: !this.state.showSidebarHeader
-    });
-  };
+      showSidebarHeader: !this.state.showSidebarHeader,
+    })
+  }
 
   /**
    * 切换右边栏
    */
-  toggleRightSide = _ => {
-    const { collapsedLeftSide, collapsedRightSide } = this.state;
+  toggleRightSide = (_) => {
+    const { collapsedLeftSide, collapsedRightSide } = this.state
     this.setState({
       collapsedLeftSide: collapsedRightSide ? true : collapsedLeftSide,
-      collapsedRightSide: !collapsedRightSide
-    });
-  };
+      collapsedRightSide: !collapsedRightSide,
+    })
+  }
 
-  onChangeTheme = theme => {
-    $$.setStore('theme', theme);
+  onChangeTheme = (theme) => {
+    $$.setStore('theme', theme)
     this.setState({
-      theme
-    });
-  };
+      theme,
+    })
+  }
 
   render() {
     const {
@@ -197,11 +195,11 @@ export default class BasicLayout extends React.PureComponent {
       theme,
       user,
       currentMenu,
-      isMobile
-    } = this.state;
-    const { routerData, location, global } = this.props;
-    const { menu, flatMenu } = global;
-    const { childRoutes } = routerData;
+      isMobile,
+    } = this.state
+    const { routerData, location, global } = this.props
+    const { menu, flatMenu } = global
+    const { childRoutes } = routerData
     const classnames = cx('basic-layout', 'full-layout', {
       fixed: theme.layout && theme.layout.indexOf('fixedSidebar') !== -1,
       'fixed-header':
@@ -209,8 +207,8 @@ export default class BasicLayout extends React.PureComponent {
       'fixed-breadcrumbs':
         theme.layout && theme.layout.indexOf('fixedBreadcrumbs') !== -1,
       'hided-breadcrumbs':
-        theme.layout && theme.layout.indexOf('hidedBreadcrumbs') !== -1
-    });
+        theme.layout && theme.layout.indexOf('hidedBreadcrumbs') !== -1,
+    })
 
     return (
       <Layout className={classnames}>
@@ -282,6 +280,6 @@ export default class BasicLayout extends React.PureComponent {
         </Layout>
         <SkinToolbox onChangeTheme={this.onChangeTheme} theme={theme} />
       </Layout>
-    );
+    )
   }
 }

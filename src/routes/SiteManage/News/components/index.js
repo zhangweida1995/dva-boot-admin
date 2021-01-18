@@ -12,9 +12,9 @@ import './index.less'
 const { Content, Header, Footer } = Layout
 const Pagination = DataTable.Pagination
 
-@connect(({ crud, loading }) => ({
-  crud,
-  loading: loading.models.crud,
+@connect(({ news, loading }) => ({
+  news,
+  loading: loading.models.news,
 }))
 export default class extends BaseComponent {
   state = {
@@ -27,7 +27,7 @@ export default class extends BaseComponent {
     const { rows } = this.state
 
     this.props.dispatch({
-      type: 'crud/remove',
+      type: 'news/remove',
       payload: {
         records,
         success: () => {
@@ -43,8 +43,8 @@ export default class extends BaseComponent {
   }
 
   render() {
-    const { crud, loading, dispatch } = this.props
-    const { pageData, employees } = crud
+    const { news, loading, dispatch } = this.props
+    const { pageData, employees } = news
     const columns = createColumns(this, employees)
     const { rows, record, visible } = this.state
 
@@ -52,7 +52,7 @@ export default class extends BaseComponent {
       columns,
       onSearch: (values) => {
         dispatch({
-          type: 'crud/getPageInfo',
+          type: 'news/getPageInfo',
           payload: {
             pageData: pageData.filter(values).jumpPage(1, 10),
           },
@@ -71,7 +71,7 @@ export default class extends BaseComponent {
       selectedRowKeys: rows.map((item) => item.id),
       onChange: ({ pageNum, pageSize }) => {
         dispatch({
-          type: 'crud/getPageInfo',
+          type: 'news/getPageInfo',
           payload: {
             pageData: pageData.jumpPage(pageNum, pageSize),
           },
@@ -98,7 +98,7 @@ export default class extends BaseComponent {
       // 可以使用主键或是否有record来区分状态
       onSubmit: (values) => {
         dispatch({
-          type: 'crud/save',
+          type: 'news/save',
           payload: {
             values,
             success: () => {
@@ -113,7 +113,7 @@ export default class extends BaseComponent {
     }
 
     return (
-      <Layout className="full-layout crud-page">
+      <Layout className="full-layout news-page">
         <Header>
           <Toolbar
             appendLeft={

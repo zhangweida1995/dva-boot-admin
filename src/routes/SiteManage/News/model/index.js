@@ -7,7 +7,7 @@ import PageHelper from '@/utils/pageHelper'
  */
 let LOADED = false
 export default modelEnhance({
-  namespace: 'crud',
+  namespace: 'news',
 
   state: {
     pageData: PageHelper.create(),
@@ -17,7 +17,7 @@ export default modelEnhance({
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(({ pathname }) => {
-        if (pathname === '/crud' && !LOADED) {
+        if (pathname === '/newsManage' && !LOADED) {
           LOADED = true
           dispatch({
             type: 'init',
@@ -30,7 +30,7 @@ export default modelEnhance({
   effects: {
     // 进入页面加载
     *init({ payload }, { call, put, select }) {
-      const { pageData } = yield select((state) => state.crud)
+      const { pageData } = yield select((state) => state.news)
 
       yield put({
         type: 'getPageInfo',
@@ -49,7 +49,7 @@ export default modelEnhance({
         type: '@request',
         payload: {
           valueField: 'pageData',
-          url: '/crud/getList',
+          url: '/news/getList',
           pageInfo: pageData,
         },
       })
@@ -57,13 +57,13 @@ export default modelEnhance({
     // 保存 之后查询分页
     *save({ payload }, { call, put, select, take }) {
       const { values, success } = payload
-      const { pageData } = yield select((state) => state.crud)
+      const { pageData } = yield select((state) => state.news)
       // put是非阻塞的 put.resolve是阻塞型的
       yield put.resolve({
         type: '@request',
         payload: {
           notice: true,
-          url: '/crud/save',
+          url: '/news/save',
           data: values,
         },
       })
@@ -79,12 +79,12 @@ export default modelEnhance({
     // 删除 之后查询分页
     *remove({ payload }, { call, put, select }) {
       const { records, success } = payload
-      const { pageData } = yield select((state) => state.crud)
+      const { pageData } = yield select((state) => state.news)
       yield put({
         type: '@request',
         payload: {
           notice: true,
-          url: '/crud/bathDelete',
+          url: '/news/bathDelete',
           data: records.map((item) => item.id),
         },
       })
@@ -101,7 +101,7 @@ export default modelEnhance({
         afterResponse: (resp) => resp.data,
         payload: {
           valueField: 'employees',
-          url: '/crud/getWorkEmployee',
+          url: '/news/getWorkEmployee',
         },
       })
     },

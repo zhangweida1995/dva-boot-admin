@@ -1,6 +1,6 @@
-import { routerRedux } from 'dva';
-import { login } from '../service';
-import $$ from 'cmn-utils';
+import { routerRedux } from 'dva'
+import { login } from '../service'
+import $$ from 'cmn-utils'
 
 export default {
   namespace: 'login',
@@ -8,41 +8,41 @@ export default {
   state: {
     loggedIn: false,
     message: '',
-    user: {}
+    user: {},
   },
 
   subscriptions: {
     setup({ history, dispatch }) {
       return history.listen(({ pathname }) => {
         if (pathname.indexOf('/sign/login') !== -1) {
-          $$.removeStore('user');
+          $$.removeStore('user')
         }
-      });
-    }
+      })
+    },
   },
 
   effects: {
     *login({ payload }, { call, put }) {
       try {
-        const { status, message, data } = yield call(login, payload);
+        const { status, message, data } = yield call(login, payload)
         if (status) {
-          $$.setStore('user', data);
-          yield put(routerRedux.replace('/'));
+          $$.setStore('user', data)
+          yield put(routerRedux.replace('/'))
         } else {
           yield put({
             type: 'loginError',
-            payload: { message }
-          });
+            payload: { message },
+          })
         }
       } catch (e) {
-        console.log(e)
+        console.error(e)
         yield put({
           type: 'loginError',
-          payload: { message: e.message }
-        });
+          payload: { message: e.message },
+        })
       }
     },
-    *logout(_, { put }) { }
+    *logout(_, { put }) {},
   },
 
   reducers: {
@@ -51,15 +51,15 @@ export default {
         ...state,
         loggedIn: true,
         message: '',
-        user: payload
-      };
+        user: payload,
+      }
     },
     loginError(state, { payload }) {
       return {
         ...state,
         loggedIn: false,
-        message: payload.message
-      };
-    }
-  }
-};
+        message: payload.message,
+      }
+    },
+  },
+}

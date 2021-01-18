@@ -1,6 +1,6 @@
-import $$ from 'cmn-utils';
-import modelEnhance from '@/utils/modelEnhance';
-
+import $$ from 'cmn-utils'
+import modelEnhance from '@/utils/modelEnhance'
+import menuList from '@/__mocks__/menu'
 export default modelEnhance({
   namespace: 'global',
 
@@ -11,24 +11,26 @@ export default modelEnhance({
 
   effects: {
     *getMenu({ payload }, { call, put }) {
-      const { status, data } = yield call(getMenu, payload);
+      const { status, data } = yield call(getMenu, payload)
       if (status) {
         const loopMenu = (menu, pitem = {}) => {
-          menu.forEach(item => {
+          menu.forEach((item) => {
             if (pitem.path) {
-              item.parentPath = pitem.parentPath ? pitem.parentPath.concat(pitem.path) : [pitem.path];
+              item.parentPath = pitem.parentPath
+                ? pitem.parentPath.concat(pitem.path)
+                : [pitem.path]
             }
             if (item.children && item.children.length) {
-              loopMenu(item.children, item);
+              loopMenu(item.children, item)
             }
-          });
+          })
         }
-        loopMenu(data);
-        
+        loopMenu(data)
+
         yield put({
           type: 'getMenuSuccess',
           payload: data,
-        });
+        })
       }
     },
   },
@@ -39,22 +41,22 @@ export default modelEnhance({
         ...state,
         menu: payload,
         flatMenu: getFlatMenu(payload),
-      };
-    }
+      }
+    },
   },
-});
+})
 
 export function getFlatMenu(menus) {
-  let menu = [];
-  menus.forEach(item => {
+  let menu = []
+  menus.forEach((item) => {
     if (item.children) {
-      menu = menu.concat(getFlatMenu(item.children));
+      menu = menu.concat(getFlatMenu(item.children))
     }
-    menu.push(item);
-  });
-  return menu;
+    menu.push(item)
+  })
+  return menu
 }
 
 export async function getMenu(payload) {
-  return $$.post('/user/menu', payload);
+  return { status: true, data: menuList } //$$.post('/user/menu', payload);
 }
