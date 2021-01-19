@@ -1,25 +1,25 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { CheckOutlined, ReloadOutlined } from '@ant-design/icons';
-import { Form } from '@ant-design/compatible';
-import '@ant-design/compatible/assets/index.css';
-import { Row, Col, Button, Divider } from 'antd';
-import cx from 'classnames';
-import objectAssign from 'object-assign';
-import $$ from 'cmn-utils';
-import omit from 'object.omit';
-import Password from './model/password';
-import './style/index.less';
+import React from 'react'
+import PropTypes from 'prop-types'
+import { CheckOutlined, ReloadOutlined } from '@ant-design/icons'
+import { Form } from '@ant-design/compatible'
+import '@ant-design/compatible/assets/index.css'
+import { Row, Col, Button, Divider } from 'antd'
+import cx from 'classnames'
+import objectAssign from 'object-assign'
+import $$ from 'cmn-utils'
+import omit from 'object.omit'
+import Password from './model/password'
+import './style/index.less'
 
-const createForm = Form.create;
+const createForm = Form.create
 
 const PlainComp = ({ className, children }) => (
   <div className={className}>{children}</div>
-);
+)
 PlainComp.propTypes = {
   className: PropTypes.string,
-  children: PropTypes.node
-};
+  children: PropTypes.node,
+}
 
 /**
  * 表单组件
@@ -89,8 +89,8 @@ class FormComp extends React.Component {
     /**
      * 是否显示底部按钮，或传入自定义的底部按钮
      */
-    footer: PropTypes.oneOfType([PropTypes.bool, PropTypes.node])
-  };
+    footer: PropTypes.oneOfType([PropTypes.bool, PropTypes.node]),
+  }
 
   static defaultProps = {
     prefixCls: 'antui-form',
@@ -98,16 +98,16 @@ class FormComp extends React.Component {
     loading: false,
     formItemLayout: {
       labelCol: { span: 6 },
-      wrapperCol: { span: 17 }
-    }
-  };
+      wrapperCol: { span: 17 },
+    },
+  }
 
   // 当type为grid时，指定每行元素个数
   cols = {
     xs: 24,
     md: 24,
-    xl: 24
-  };
+    xl: 24,
+  }
 
   // 内联元素默认宽
   width = {
@@ -119,27 +119,27 @@ class FormComp extends React.Component {
     default: 100,
     treeSelect: 110,
     cascade: 110,
-    cascader: 110
-  };
+    cascader: 110,
+  }
 
   // 当type为grid时，指定每两个元素的间隔
   rows = {
-    gutter: 8
-  };
+    gutter: 8,
+  }
 
-  onReset = e => {
-    this.props.form.resetFields();
-  };
+  onReset = (e) => {
+    this.props.form.resetFields()
+  }
 
-  onSubmit = e => {
-    e.preventDefault();
-    const { form, record, onSubmit } = this.props;
+  onSubmit = (e) => {
+    e.preventDefault()
+    const { form, record, onSubmit } = this.props
     form.validateFields((err, values) => {
       if (!err) {
-        onSubmit && onSubmit(values, record);
+        onSubmit && onSubmit(values, record)
       }
-    });
-  };
+    })
+  }
 
   render() {
     const {
@@ -160,34 +160,34 @@ class FormComp extends React.Component {
       loading,
       footer,
       ...otherProps
-    } = this.props;
+    } = this.props
 
-    delete otherProps.onSubmit;
+    delete otherProps.onSubmit
 
     let classname = cx(prefixCls, className, {
       'form-inline': type === 'inline',
       'form-grid': type === 'grid',
-      preview: preview
-    });
+      preview: preview,
+    })
 
-    const colopts = type === 'grid' ? cols || this.cols : {};
-    const rowopts = type === 'grid' ? rows || this.rows : {};
+    const colopts = type === 'grid' ? cols || this.cols : {}
+    const rowopts = type === 'grid' ? rows || this.rows : {}
 
-    let ComponentRow = type === 'inline' ? PlainComp : Row;
-    let ComponentCol = type === 'inline' ? PlainComp : Col;
-    let ComponentItem = Form.Item;
+    let ComponentRow = type === 'inline' ? PlainComp : Row
+    let ComponentCol = type === 'inline' ? PlainComp : Col
+    let ComponentItem = Form.Item
 
-    let formFields = columns.filter(col => col.formItem);
+    let formFields = columns.filter((col) => col.formItem)
     formFields = group
-      ? formFields.filter(col => col.formItem && col.formItem.group === group)
-      : formFields;
+      ? formFields.filter((col) => col.formItem && col.formItem.group === group)
+      : formFields
 
-    let getPopupContainer = null;
+    let getPopupContainer = null
     if (appendTo) {
-      if ($$.isFunction(appendTo)) getPopupContainer = appendTo;
+      if ($$.isFunction(appendTo)) getPopupContainer = appendTo
       else if (appendTo === true)
-        getPopupContainer = triggerNode => triggerNode.parentNode;
-      else getPopupContainer = _ => appendTo;
+        getPopupContainer = (triggerNode) => triggerNode.parentNode
+      else getPopupContainer = (_) => appendTo
     }
 
     return (
@@ -199,14 +199,14 @@ class FormComp extends React.Component {
         <ComponentRow className="row-item" {...rowopts}>
           {formFields.map((field, i) => {
             // 传入个性化的列大小，改变这个值可以改变每行元素的个数
-            let col = { ...colopts };
+            let col = { ...colopts }
             if (type === 'grid' && field.formItem.col) {
-              col = field.formItem.col;
+              col = field.formItem.col
             } else if (type !== 'grid') {
-              col = {};
+              col = {}
             }
 
-            let formItemLayout = { ..._formItemLayout, ...layout };
+            let formItemLayout = { ..._formItemLayout, ...layout }
             if (
               type === 'grid' &&
               (field.formItem.formItemLayout || field.formItem.layout)
@@ -214,13 +214,13 @@ class FormComp extends React.Component {
               formItemLayout = {
                 ...formItemLayout,
                 ...field.formItem.formItemLayout,
-                ...field.formItem.layout
-              };
+                ...field.formItem.layout,
+              }
             } else if (type !== 'grid') {
-              formItemLayout = {};
+              formItemLayout = {}
             }
 
-            const fieldType = field.formItem.type || 'input';
+            const fieldType = field.formItem.type || 'input'
 
             let formProps = {
               form,
@@ -228,52 +228,52 @@ class FormComp extends React.Component {
               title: field.title,
               record,
               preview,
-              ...field.formItem
-            };
+              ...field.formItem,
+            }
 
             if (type === 'inline') {
               formProps.style = {
-                width: formProps.width || this.width[fieldType]
-              };
+                width: formProps.width || this.width[fieldType],
+              }
             }
 
             if (getPopupContainer) {
-              formProps.getPopupContainer = getPopupContainer;
+              formProps.getPopupContainer = getPopupContainer
             }
 
             if (field.dict) {
-              formProps.dict = field.dict;
+              formProps.dict = field.dict
             }
 
             // 传入子组件前删除无用属性
-            formProps = omit(formProps, ['formItemLayout', 'layout', 'col']);
+            formProps = omit(formProps, ['formItemLayout', 'layout', 'col'])
 
-            let FieldComp;
+            let FieldComp
             switch (fieldType) {
               case 'date~': // 日期范围
               case 'datetime': // 日期时间
               case 'date': // 日期
               case 'month': // 月
               case 'time': // 时间
-                FieldComp = require(`./model/date`).default(formProps);
-                break;
+                FieldComp = require(`./model/date`).default(formProps)
+                break
               case 'input': // 输入框
               case 'textarea': // 多行文本
-                FieldComp = require(`./model/input`).default(formProps);
-                break;
+                FieldComp = require(`./model/input`).default(formProps)
+                break
               case 'hidden': // 隐藏域
                 return (
                   <span key={`col-${i}`}>
                     {require(`./model/input`).default(formProps)}
                   </span>
-                );
+                )
               case 'line': // 分隔线
-                const lineProps = omit(formProps, 'type');
+                const lineProps = omit(formProps, 'type')
                 return (
                   <Divider key={`col-${i}`} {...lineProps}>
                     {formProps.title}
                   </Divider>
-                );
+                )
               case 'password': // 密码
                 return (
                   <Password
@@ -282,12 +282,12 @@ class FormComp extends React.Component {
                     col={col}
                     {...formProps}
                   />
-                );
+                )
               default:
                 // 通用
                 FieldComp = require(`./model/${fieldType.toLowerCase()}`).default(
                   formProps
-                );
+                )
             }
 
             return (
@@ -300,7 +300,7 @@ class FormComp extends React.Component {
                   {FieldComp}
                 </ComponentItem>
               </ComponentCol>
-            );
+            )
           })}
           {children}
           {footer === undefined ? (
@@ -314,7 +314,11 @@ class FormComp extends React.Component {
               >
                 提交
               </Button>
-              <Button title="重置" onClick={e => this.onReset()} icon={<ReloadOutlined />}>
+              <Button
+                title="重置"
+                onClick={(e) => this.onReset()}
+                icon={<ReloadOutlined />}
+              >
                 重置
               </Button>
             </ComponentCol>
@@ -323,10 +327,10 @@ class FormComp extends React.Component {
           )}
         </ComponentRow>
       </Form>
-    );
+    )
   }
 }
 
-export const Item = Form.Item;
+export const Item = Form.Item
 
-export default createForm()(FormComp);
+export default createForm()(FormComp)

@@ -1,34 +1,38 @@
-import React from 'react';
-import { connect } from 'dva';
-import { Layout, Button, message } from 'antd';
-import BaseComponent from 'components/BaseComponent';
-import Editor from 'components/Editor';
-import Panel from 'components/Panel';
-const { Content } = Layout;
+import React from 'react'
+import { connect } from 'dva'
+import { Layout, Button, message } from 'antd'
+import BaseComponent from 'components/BaseComponent'
+import Editor from 'components/Editor'
+import Panel from 'components/Panel'
+const { Content } = Layout
 
 @connect()
 export default class extends BaseComponent {
   state = {
     html: '',
-    htmlEditor: ''
-  };
-  onChange = html => {
+    htmlEditor: '',
+  }
+  onChange = (html) => {
     this.setState({
-      html
-    });
-  };
+      html,
+    })
+  }
 
   // 会返回 wangEditor 的实例， 与他的onChange函数，注意这个是他的onChange
-  onLoaded = editor => {
-    this.editor = editor;
-  };
+  onLoaded = (editor) => {
+    this.editor = editor
+  }
 
-  onChangeNative = html => {
+  onChangeNative = (html) => {
     this.setState({
-      htmlEditor: html
-    });
-  };
-
+      htmlEditor: html,
+    })
+  }
+  defaultProps = {
+    showFullScreen: !0,
+    height: 800,
+    menus: ['bold', 'head', 'link', 'italic', 'underline'],
+  }
   render() {
     return (
       <Layout className="full-layout page">
@@ -44,24 +48,32 @@ export default class extends BaseComponent {
           </Panel>
 
           <Panel title="wangEditor 方式">
-            <p>
-              建议使用这种方式，在onLoaded里取得原生对象操作编辑器
-            </p>
+            <p>建议使用这种方式，在onLoaded里取得原生对象操作编辑器</p>
             <p>
               <Button.Group>
                 <Button
                   type="primary"
-                  onClick={e => this.editor.txt.html('<p>今天也要快乐啊！</p>')}
+                  onClick={(e) =>
+                    this.editor.txt.html('<p>今天也要快乐啊！</p>')
+                  }
                 >
                   设置值
                 </Button>
-                <Button onClick={e => message.success(this.editor.txt.html())}>
+                <Button
+                  onClick={(e) => message.success(this.editor.txt.html())}
+                >
                   获取值
                 </Button>
-                <Button onClick={e => this.editor.txt.html('')}>清空值</Button>
+                <Button onClick={(e) => this.editor.txt.html('')}>
+                  清空值
+                </Button>
               </Button.Group>
             </p>
-            <Editor onLoaded={this.onLoaded} onChange={this.onChangeNative} />
+            <Editor
+              onLoaded={this.onLoaded}
+              {...this.defaultProps}
+              onChange={this.onChangeNative}
+            />
             <b>HTML: </b>
             {this.state.htmlEditor}
           </Panel>
@@ -74,16 +86,16 @@ export default class extends BaseComponent {
               <Button.Group>
                 <Button
                   type="primary"
-                  onClick={e =>
+                  onClick={(e) =>
                     this.setState({ html: '<div>今天也要快乐啊！</div>' })
                   }
                 >
                   设置值
                 </Button>
-                <Button onClick={e => message.success(this.state.html)}>
+                <Button onClick={(e) => message.success(this.state.html)}>
                   获取值
                 </Button>
-                <Button onClick={e => this.setState({ html: '' })}>
+                <Button onClick={(e) => this.setState({ html: '' })}>
                   清空值
                 </Button>
               </Button.Group>
@@ -94,6 +106,6 @@ export default class extends BaseComponent {
           </Panel>
         </Content>
       </Layout>
-    );
+    )
   }
 }
